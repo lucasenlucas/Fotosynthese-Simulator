@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fotosynthese Simulator - Game</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="snow.js"></script>
 </head>
 <body id="theme-summer">
     <div class="game-container">
@@ -14,12 +13,12 @@
             <div class="theme-selector">
                 <button onclick="setTheme('summer')">Zomer</button>
                 <button onclick="setTheme('autumn')">Herfst</button>
-                <button onclick="setTheme('winter')">Winter</button>
             </div>
         </header>
         <main>
             <div class="plant-container">
-                <p>Hier komt de plantanimatie en controls</p>
+                <p>Hier komt de plantanimatie en de controles voor fotosynthese.</p>
+                <p>Gebruik de sliders hieronder om licht, water, en CO2 te manipuleren!</p>
             </div>
         </main>
     </div>
@@ -28,11 +27,6 @@
     function setTheme(theme) {
         const body = document.getElementById('theme-summer');
         body.id = `theme-${theme}`;
-        if (theme === 'winter') {
-            startSnow(); // Activeer sneeuwval
-        } else {
-            stopSnow(); // Stop sneeuwval
-        }
     }
 </script>
 </html>
