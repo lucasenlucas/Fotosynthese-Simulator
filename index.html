@@ -4,19 +4,239 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fotosynthese Simulator</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Algemene stijlen */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            transition: background 0.5s ease, filter 0.5s ease;
+        }
+
+        #theme-summer {
+            background: linear-gradient(to bottom, #87CEEB, #FFD700);
+            color: #333;
+        }
+
+        #theme-autumn {
+            background: linear-gradient(to bottom, #FF7F50, #FF4500);
+            color: #fff;
+        }
+
+        #fire-effect {
+            background: rgba(255, 0, 0, 0.4);
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { background: rgba(255, 0, 0, 0.3); }
+            100% { background: rgba(255, 50, 0, 0.5); }
+        }
+
+        #frozen-effect {
+            filter: blur(3px) brightness(0.7);
+            background: rgba(0, 255, 255, 0.3);
+        }
+
+        /* Startscherm */
+        .start-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+        }
+
+        .start-container h1 {
+            font-size: 3rem;
+            color: #2f4f4f;
+            margin-bottom: 20px;
+        }
+
+        .start-container button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            color: white;
+            background: #4caf50;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .start-container button:hover {
+            background: #388e3c;
+        }
+
+        .game-container {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            text-align: center;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .plant-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .flower {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.5s ease, filter 0.5s ease;
+        }
+
+        .stem {
+            width: 10px;
+            height: 200px;
+            background: green;
+            border-radius: 5px;
+            position: relative;
+            transition: transform 0.5s ease, background 0.5s ease;
+            transform-origin: bottom center;
+        }
+
+        .flower-head {
+            width: 100px;
+            height: 100px;
+            background: yellow;
+            border-radius: 50%;
+            position: relative;
+            margin-top: -50px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background 0.5s ease, transform 0.5s ease;
+        }
+
+        .sliders {
+            margin-top: 20px;
+        }
+
+        .message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            z-index: 1000;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body id="theme-summer">
-    <div class="start-container">
+    <div class="start-container" id="start-menu">
         <h1>Fotosynthese Simulator</h1>
         <button onclick="startSimulation()">Start</button>
         <p>Gemaakt door Lucas Mangroelal</p>
         <p>In opdracht van sectie Mens en Natuur 2024/25 van het 's Gravendreef College</p>
     </div>
 
+    <div class="game-container" id="game-page">
+        <header>
+            <h1>Fotosynthese Simulator</h1>
+        </header>
+        <main>
+            <div class="plant-container">
+                <div class="flower" id="flower">
+                    <div class="stem" id="stem"></div>
+                    <div class="flower-head" id="flower-head"></div>
+                </div>
+                <div class="sliders">
+                    <label for="light">Lichtintensiteit</label>
+                    <input type="range" id="light" min="0" max="100" value="50" oninput="updatePlant()">
+                    <label for="water">Watertoevoer</label>
+                    <input type="range" id="water" min="0" max="100" value="50" oninput="updatePlant()">
+                    <label for="co2">CO2-concentratie</label>
+                    <input type="range" id="co2" min="0" max="100" value="50" oninput="updatePlant()">
+                    <label for="temp">Temperatuur</label>
+                    <input type="range" id="temp" min="0" max="100" value="50" oninput="updateTemperature()">
+                </div>
+            </div>
+        </main>
+        <footer>
+            Created by Lucas Mangroelal
+        </footer>
+    </div>
+
+    <div class="message" id="message"></div>
+
     <script>
         function startSimulation() {
-            window.location.href = "game.html";
+            document.getElementById('start-menu').style.display = 'none';
+            document.getElementById('game-page').style.display = 'flex';
+        }
+
+        function updatePlant() {
+            const light = document.getElementById('light').value;
+            const water = document.getElementById('water').value;
+            const co2 = document.getElementById('co2').value;
+
+            const avg = (parseInt(light) + parseInt(water) + parseInt(co2)) / 3;
+            const stem = document.getElementById('stem');
+            const flowerHead = document.getElementById('flower-head');
+
+            if (avg > 70 && avg < 90) {
+                flowerHead.style.background = "yellow";
+                stem.style.transform = "rotate(0deg)";
+            } else if (avg > 40) {
+                flowerHead.style.background = "orange";
+                stem.style.transform = "rotate(-15deg)";
+            } else {
+                flowerHead.style.background = "brown";
+                stem.style.transform = "rotate(-30deg)";
+            }
+
+            flowerHead.style.transform = `scale(${avg / 100})`;
+        }
+
+        function updateTemperature() {
+            const temp = document.getElementById('temp').value;
+            const body = document.body;
+            const message = document.getElementById('message');
+
+            if (temp > 80) {
+                body.id = "fire-effect";
+                message.style.display = "block";
+                message.textContent = "Simulatie staat in brand. Maak de simulator kouder om de website af te laten koelen.";
+            } else if (temp < 20) {
+                body.id = "frozen-effect";
+                message.style.display = "block";
+                message.textContent = "Temperatuur is te laag. Simulator is bevroren. Maak de simulator warmer om hem weer normaal te laten werken.";
+            } else {
+                body.id = "theme-summer";
+                message.style.display = "none";
+            }
         }
     </script>
 </body>
