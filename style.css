@@ -1,0 +1,68 @@
+/* Algemene stijlen */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    transition: background 0.5s ease, color 0.5s ease;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.theme-selector button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 100px);
+}
+
+/* Thema's */
+#theme-summer {
+    background: linear-gradient(to bottom, #87CEEB, #FFD700);
+    color: #333;
+}
+
+#theme-autumn {
+    background: linear-gradient(to bottom, #FF7F50, #FF4500);
+    color: #fff;
+}
+
+#theme-winter {
+    background: linear-gradient(to bottom, #ADD8E6, #E0FFFF);
+    color: #333;
+}
+
+/* Zomerknop */
+.theme-selector button:nth-child(1) {
+    background: #FFD700;
+    color: #333;
+}
+
+/* Herfstknop */
+.theme-selector button:nth-child(2) {
+    background: #FF4500;
+    color: white;
+}
+
+/* Winterknop */
+.theme-selector button:nth-child(3) {
+    background: #ADD8E6;
+    color: #333;
+}
