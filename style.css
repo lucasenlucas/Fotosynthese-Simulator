@@ -6,6 +6,56 @@ body {
     transition: background 0.5s ease, color 0.5s ease;
 }
 
+/* Startmenu */
+.start-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    background: linear-gradient(to bottom, #87CEEB, #FFD700);
+    color: #333;
+}
+
+.start-container h1 {
+    font-size: 3rem;
+    color: #2f4f4f;
+    margin-bottom: 20px;
+}
+
+.start-container button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    color: white;
+    background: #4caf50;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin: 20px 0;
+}
+
+.start-container button:hover {
+    background: #388e3c;
+}
+
+.start-container p {
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Gamepagina */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    text-align: center;
+    background: linear-gradient(to bottom, #87CEEB, #FFD700);
+    color: #333;
+}
+
 header {
     text-align: center;
     padding: 20px;
@@ -13,7 +63,7 @@ header {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+header h1 {
     font-size: 2rem;
     margin: 0;
 }
@@ -30,7 +80,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 100px);
+    flex-grow: 1;
 }
 
 /* Thema's */
@@ -44,25 +94,12 @@ main {
     color: #fff;
 }
 
-#theme-winter {
-    background: linear-gradient(to bottom, #ADD8E6, #E0FFFF);
-    color: #333;
-}
-
-/* Zomerknop */
 .theme-selector button:nth-child(1) {
     background: #FFD700;
     color: #333;
 }
 
-/* Herfstknop */
 .theme-selector button:nth-child(2) {
     background: #FF4500;
     color: white;
-}
-
-/* Winterknop */
-.theme-selector button:nth-child(3) {
-    background: #ADD8E6;
-    color: #333;
 }
