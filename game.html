@@ -1,242 +1,224 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fotosynthese Simulator</title>
+    <title>Vrij Spelen - Fotosynthese Simulatie</title>
     <style>
-        /* Algemene stijlen */
         body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
-            transition: background 0.5s ease, filter 0.5s ease;
+            background-image: radial-gradient(black 55%, #0000),
+                linear-gradient(
+                    135deg,
+                    #ff7043,
+                    #ffa726,
+                    #fff3e0,
+                    #a2c3fc,
+                    #81d4fa,
+                    #4fc3f7,
+                    #0288d1,
+                    #01579b
+                );
+            background-size: 100% 0.5%, contain;
+            overflow: hidden;
+            transition: background 1s ease;
         }
 
-        #theme-summer {
-            background: linear-gradient(to bottom, #87CEEB, #FFD700);
-            color: #333;
-        }
-
-        #theme-autumn {
-            background: linear-gradient(to bottom, #FF7F50, #FF4500);
-            color: #fff;
-        }
-
-        #fire-effect {
-            background: rgba(255, 0, 0, 0.4);
-            animation: flicker 0.1s infinite alternate;
-        }
-
-        @keyframes flicker {
-            0% { background: rgba(255, 0, 0, 0.3); }
-            100% { background: rgba(255, 50, 0, 0.5); }
-        }
-
-        #frozen-effect {
-            filter: blur(3px) brightness(0.7);
-            background: rgba(0, 255, 255, 0.3);
-        }
-
-        /* Startscherm */
-        .start-container {
+        .container {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            flex-direction: row;
+            justify-content: space-between;
             align-items: center;
-            flex: 1;
-            text-align: center;
-        }
-
-        .start-container h1 {
-            font-size: 3rem;
-            color: #2f4f4f;
-            margin-bottom: 20px;
-        }
-
-        .start-container button {
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            color: white;
-            background: #4caf50;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin: 20px 0;
-        }
-
-        .start-container button:hover {
-            background: #388e3c;
-        }
-
-        .game-container {
-            display: none;
-            flex-direction: column;
-            flex: 1;
-            text-align: center;
-        }
-
-        header {
-            text-align: center;
+            width: 100%;
+            max-width: 1200px;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
         }
 
-        header h1 {
-            font-size: 2rem;
-            margin: 0;
-        }
-
-        .plant-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .control-panel, .flower-container {
+            background: #FFF3E0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
             flex: 1;
+            margin: 10px;
+        }
+
+        .flower-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .flower {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.5s ease, filter 0.5s ease;
+            position: relative;
+            width: 100px;
+            height: 150px;
         }
 
         .stem {
-            width: 10px;
-            height: 200px;
-            background: green;
-            border-radius: 5px;
-            position: relative;
-            transition: transform 0.5s ease, background 0.5s ease;
-            transform-origin: bottom center;
+            background: #388E3C;
+            width: 20px;
+            height: 80px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 10px;
         }
 
-        .flower-head {
-            width: 100px;
-            height: 100px;
-            background: yellow;
+        .petal {
+            width: 60px;
+            height: 60px;
+            background: #FF7043;
+            position: absolute;
             border-radius: 50%;
-            position: relative;
-            margin-top: -50px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: background 0.5s ease, transform 0.5s ease;
         }
 
-        .sliders {
-            margin-top: 20px;
+        .petal:nth-child(1) {
+            top: -20px;
+            left: 20px;
         }
 
-        .message {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            z-index: 1000;
+        .petal:nth-child(2) {
+            top: 10px;
+            left: -20px;
         }
 
-        footer {
+        .petal:nth-child(3) {
+            top: 10px;
+            left: 60px;
+        }
+
+        .petal:nth-child(4) {
+            top: 40px;
+            left: 20px;
+        }
+
+        .center {
+            width: 40px;
+            height: 40px;
+            background: #FFEB3B;
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            border-radius: 50%;
+        }
+
+        .feedback-panel {
             text-align: center;
+            margin-top: 20px;
             padding: 10px;
-            background: rgba(0, 0, 0, 0.1);
-            font-size: 0.9rem;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ffc107, #ff7043);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1.5em;
+            animation: fadeIn 1s ease;
+        }
+
+        .credits {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #FFA726;
+            animation: slideUp 1s ease;
+        }
+
+        .credits a {
+            color: #FFA726;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .credits a:hover {
+            color: #FFEB3B;
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
-<body id="theme-summer">
-    <div class="start-container" id="start-menu">
-        <h1>Fotosynthese Simulator</h1>
-        <button onclick="startSimulation()">Start</button>
-        <p>Gemaakt door Lucas Mangroelal</p>
-        <p>In opdracht van sectie Mens en Natuur 2024/25 van het 's Gravendreef College</p>
-    </div>
+<body>
+    <div class="container">
+        <div class="control-panel">
+            <h2>Vrij Spelen</h2>
+            <label>Zonlicht: <span id="sunlight-value">50%</span></label>
+            <input type="range" id="sunlight" min="0" max="100" value="50" oninput="updateFlower()">
 
-    <div class="game-container" id="game-page">
-        <header>
-            <h1>Fotosynthese Simulator</h1>
-        </header>
-        <main>
-            <div class="plant-container">
-                <div class="flower" id="flower">
-                    <div class="stem" id="stem"></div>
-                    <div class="flower-head" id="flower-head"></div>
-                </div>
-                <div class="sliders">
-                    <label for="light">Lichtintensiteit</label>
-                    <input type="range" id="light" min="0" max="100" value="50" oninput="updatePlant()">
-                    <label for="water">Watertoevoer</label>
-                    <input type="range" id="water" min="0" max="100" value="50" oninput="updatePlant()">
-                    <label for="co2">CO2-concentratie</label>
-                    <input type="range" id="co2" min="0" max="100" value="50" oninput="updatePlant()">
-                    <label for="temp">Temperatuur</label>
-                    <input type="range" id="temp" min="0" max="100" value="50" oninput="updateTemperature()">
-                </div>
+            <label>Zuurstof: <span id="oxygen-value">15 gram</span></label>
+            <input type="range" id="oxygen" min="0" max="30" value="15" oninput="updateFlower()">
+
+            <label>Water: <span id="water-value">15 gram</span></label>
+            <input type="range" id="water" min="0" max="30" value="15" oninput="updateFlower()">
+        </div>
+
+        <div class="flower-container">
+            <div class="flower" id="flower">
+                <div class="stem"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="center"></div>
             </div>
-        </main>
-        <footer>
-            Created by Lucas Mangroelal
-        </footer>
+        </div>
     </div>
 
-    <div class="message" id="message"></div>
+    <div class="feedback-panel" id="feedback-panel">
+        <div id="feedback-message">Pas de schuifbalken aan om de bloem te beïnvloeden.</div>
+    </div>
+
+    <div class="credits">
+        <p>Credits: Lucas Mangroelal</p>
+
+    </div>
 
     <script>
-        function startSimulation() {
-            document.getElementById('start-menu').style.display = 'none';
-            document.getElementById('game-page').style.display = 'flex';
-        }
+        const sunlightInput = document.getElementById("sunlight");
+        const oxygenInput = document.getElementById("oxygen");
+        const waterInput = document.getElementById("water");
+        const flower = document.getElementById("flower");
 
-        function updatePlant() {
-            const light = document.getElementById('light').value;
-            const water = document.getElementById('water').value;
-            const co2 = document.getElementById('co2').value;
+        function updateFlower() {
+            const sunlight = sunlightInput.value;
+            const oxygen = oxygenInput.value;
+            const water = waterInput.value;
 
-            const avg = (parseInt(light) + parseInt(water) + parseInt(co2)) / 3;
-            const stem = document.getElementById('stem');
-            const flowerHead = document.getElementById('flower-head');
+            document.getElementById("sunlight-value").textContent = sunlight + "%";
+            document.getElementById("oxygen-value").textContent = oxygen + " gram";
+            document.getElementById("water-value").textContent = water + " gram";
 
-            if (avg > 70 && avg < 90) {
-                flowerHead.style.background = "yellow";
-                stem.style.transform = "rotate(0deg)";
-            } else if (avg > 40) {
-                flowerHead.style.background = "orange";
-                stem.style.transform = "rotate(-15deg)";
-            } else {
-                flowerHead.style.background = "brown";
-                stem.style.transform = "rotate(-30deg)";
-            }
-
-            flowerHead.style.transform = `scale(${avg / 100})`;
-        }
-
-        function updateTemperature() {
-            const temp = document.getElementById('temp').value;
-            const body = document.body;
-            const message = document.getElementById('message');
-
-            if (temp > 80) {
-                body.id = "fire-effect";
-                message.style.display = "block";
-                message.textContent = "Simulatie staat in brand. Maak de simulator kouder om de website af te laten koelen.";
-            } else if (temp < 20) {
-                body.id = "frozen-effect";
-                message.style.display = "block";
-                message.textContent = "Temperatuur is te laag. Simulator is bevroren. Maak de simulator warmer om hem weer normaal te laten werken.";
-            } else {
-                body.id = "theme-summer";
-                message.style.display = "none";
-            }
+            const brightness = Math.min(sunlight / 100, 1) * Math.min(oxygen / 20, 1) * Math.min(water / 20, 1);
+            flower.style.transform = `scale(${0.8 + brightness * 0.4})`;
+            flower.style.filter = `brightness(${50 + brightness * 50}%)`;
         }
     </script>
 </body>
