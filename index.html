@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGDC - Fotosynthese Simulatie</title>
+    <title>Vrij Spelen - Fotosynthese Simulatie</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,6 +29,19 @@
             background-size: 100% 0.5%, contain;
             overflow: hidden;
             transition: background 1s ease;
+        }
+
+        .header {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .container {
@@ -145,19 +158,6 @@
             text-decoration: underline;
         }
 
-        .test-version {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.9em;
-            color: #333;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            font-weight: bold;
-        }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -180,18 +180,18 @@
     </style>
 </head>
 <body>
-    <div class="test-version">Test Versie 1</div>
+    <div class="header">Versie 1.1</div>
 
     <div class="container">
         <div class="control-panel">
             <h2>SGDC</h2>
             <label>Zonlicht: <span id="sunlight-value">50%</span></label>
-            <input type="range" id="sunlight" min="0" max="100" value="50" oninput="updateFlower()">
+            <input type="range" id="sunlight" min="0" max="120" value="50" oninput="updateFlower()">
 
-            <label>Zuurstof: <span id="oxygen-value">15 gram</span></label>
+            <label>Koolstofdioxide: <span id="oxygen-value">15 gram</span></label>
             <input type="range" id="oxygen" min="0" max="30" value="15" oninput="updateFlower()">
 
-            <label>Water: <span id="water-value">15 gram</span></label>
+            <label>Water: <span id="water-value">15 mL</span></label>
             <input type="range" id="water" min="0" max="30" value="15" oninput="updateFlower()">
         </div>
 
@@ -208,7 +208,7 @@
     </div>
 
     <div class="feedback-panel" id="feedback-panel">
-        <div id="feedback-message">-.</div>
+        <div id="feedback-message">hier komt feedback--wordt nog aan gewerkt </div>
     </div>
 
     <div class="credits">
@@ -228,9 +228,16 @@
 
             document.getElementById("sunlight-value").textContent = sunlight + "%";
             document.getElementById("oxygen-value").textContent = oxygen + " gram";
-            document.getElementById("water-value").textContent = water + " gram";
+            document.getElementById("water-value").textContent = water + " mL";
 
-            const brightness = Math.min(sunlight / 100, 1) * Math.min(oxygen / 20, 1) * Math.min(water / 20, 1);
+            let brightness = Math.min(sunlight / 100, 1) * Math.min(oxygen / 20, 1) * Math.min(water / 20, 1);
+
+            if (sunlight > 100) {
+                brightness -= (sunlight - 100) / 40; // Plant takelt af boven 100% zonlicht
+            }
+
+            brightness = Math.max(0, brightness); // Voorkom negatieve helderheid
+
             flower.style.transform = `scale(${0.8 + brightness * 0.4})`;
             flower.style.filter = `brightness(${50 + brightness * 50}%)`;
         }
