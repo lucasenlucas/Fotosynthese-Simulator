@@ -1,246 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vrij Spelen - Fotosynthese Simulatie</title>
+    <title>Login | Netwise</title>
+    <script type="module">
+        // Firebase SDK importeren
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+        // Firebase configuratie
+        const firebaseConfig = {
+            apiKey: "AIzaSyDPaiRSPMsNEvgOCXKss-PCsxAy_1-Fxyc",
+            authDomain: "netwise-portal.firebaseapp.com",
+            projectId: "netwise-portal",
+            storageBucket: "netwise-portal.firebasestorage.app",
+            messagingSenderId: "985807438792",
+            appId: "1:985807438792:web:aaa358a160658903b076fd"
+        };
+
+        // Firebase initialiseren
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("submit-code").addEventListener("click", async () => {
+                const code = document.getElementById("class-code").value.trim();
+                
+                if (code === "") {
+                    alert("Voer een klascode in!");
+                    return;
+                }
+
+                // Check of klascode bestaat
+                const klasDocRef = doc(db, "klassen", code);
+                const klasDocSnap = await getDoc(klasDocRef);
+
+                if (klasDocSnap.exists()) {
+                    const programmasRef = collection(klasDocRef, "programma's");
+                    const programmasSnap = await getDocs(programmasRef);
+
+                    let programList = document.getElementById("program-list");
+                    programList.innerHTML = ""; // Oude lijst verwijderen
+
+                    programmasSnap.forEach((doc) => {
+                        let data = doc.data();
+                        let li = document.createElement("li");
+                        li.innerHTML = `<a href="${data.url}">${data.naam}</a>`;
+                        programList.appendChild(li);
+                    });
+
+                } else {
+                    alert("Ongeldige klascode!");
+                }
+            });
+        });
+    </script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-image: radial-gradient(black 55%, #0000),
-                linear-gradient(
-                    135deg,
-                    #ff7043,
-                    #ffa726,
-                    #fff3e0,
-                    #a2c3fc,
-                    #81d4fa,
-                    #4fc3f7,
-                    #0288d1,
-                    #01579b
-                );
-            background-size: 100% 0.5%, contain;
-            overflow: hidden;
-            transition: background 1s ease;
+        /* Kleuren en variabelen */
+        :root {
+            --ruler: 16px;
+            --color-red: #AE1100;
+            --color-bg: #EBECF0;
+            --color-shadow: #BABECC;
+            --color-white: #FFF;
         }
 
-        .header {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 1.2em;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        /* Algemene stijlen */
+        body, html {
+            background-color: var(--color-bg);
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            padding: 20px;
         }
 
-        .container {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
+        /* Formulier styling */
+        form {
+            background: var(--color-bg);
+            padding: calc(var(--ruler) * 2);
+            width: 90%;
+            max-width: 400px;
+            margin: auto;
+            border-radius: 20px;
+            box-shadow: -5px -5px 20px var(--color-white), 5px 5px 20px var(--color-shadow);
+        }
+
+        .segment {
+            padding: calc(var(--ruler) * 2) 0;
+            text-align: center;
+        }
+
+        /* Inputvelden */
+        input {
             width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-            box-sizing: border-box;
+            padding: var(--ruler);
+            margin-bottom: var(--ruler);
+            border: none;
+            border-radius: 50px;
+            background: var(--color-bg);
+            box-shadow: inset 2px 2px 5px var(--color-shadow), inset -5px -5px 10px var(--color-white);
+            transition: 0.2s;
+            font-size: var(--ruler);
         }
 
-        .control-panel, .flower-container {
-            background: #FFF3E0;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            flex: 1;
-            margin: 10px;
+        input:focus {
+            box-shadow: inset 1px 1px 2px var(--color-shadow), inset -1px -1px 2px var(--color-white);
         }
 
-        .flower-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .flower {
-            position: relative;
-            width: 100px;
-            height: 150px;
-        }
-
-        .stem {
-            background: #388E3C;
-            width: 20px;
-            height: 80px;
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 10px;
-        }
-
-        .petal {
-            width: 60px;
-            height: 60px;
-            background: #FF7043;
-            position: absolute;
-            border-radius: 50%;
-            transition: background 0.5s ease, transform 0.5s ease;
-        }
-
-        .petal:nth-child(1) {
-            top: -20px;
-            left: 20px;
-        }
-
-        .petal:nth-child(2) {
-            top: 10px;
-            left: -20px;
-        }
-
-        .petal:nth-child(3) {
-            top: 10px;
-            left: 60px;
-        }
-
-        .petal:nth-child(4) {
-            top: 40px;
-            left: 20px;
-        }
-
-        .center {
-            width: 40px;
-            height: 40px;
-            background: #FFEB3B;
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            border-radius: 50%;
-        }
-
-        .feedback-panel {
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #ffc107, #ff7043);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-            color: #fff;
-            font-size: 1.5em;
-            animation: fadeIn 1s ease;
-        }
-
-        .credits {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 1.2em;
-            color: #FFA726;
-            animation: slideUp 1s ease;
-        }
-
-        .credits a {
-            color: #FFA726;
-            text-decoration: none;
+        /* Knoppen */
+        button {
+            width: 100%;
+            padding: var(--ruler);
+            border: none;
+            border-radius: 50px;
+            font-size: var(--ruler);
             font-weight: bold;
-            transition: color 0.3s ease;
+            background: var(--color-bg);
+            box-shadow: -5px -5px 20px var(--color-white), 5px 5px 20px var(--color-shadow);
+            cursor: pointer;
+            transition: 0.2s;
         }
 
-        .credits a:hover {
-            color: #FFEB3B;
+        button:hover {
+            box-shadow: -2px -2px 5px var(--color-white), 2px 2px 5px var(--color-shadow);
+        }
+
+        button.red {
+            color: var(--color-red);
+        }
+
+        /* Programmalijst */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            padding: 10px;
+            background: var(--color-bg);
+            box-shadow: 2px 2px 5px var(--color-shadow), -2px -2px 5px var(--color-white);
+            border-radius: 10px;
+            margin: 10px auto;
+            width: 80%;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        a:hover {
             text-decoration: underline;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="header">Versie 1.1</div>
 
-    <div class="container">
-        <div class="control-panel">
-            <h2>SGDC</h2>
-            <label>Zonlicht: <span id="sunlight-value">50%</span></label>
-            <input type="range" id="sunlight" min="0" max="120" value="50" oninput="updateFlower()">
-
-            <label>Koolstofdioxide: <span id="oxygen-value">15 gram</span></label>
-            <input type="range" id="oxygen" min="0" max="30" value="15" oninput="updateFlower()">
-
-            <label>Water: <span id="water-value">15 mL</span></label>
-            <input type="range" id="water" min="0" max="30" value="15" oninput="updateFlower()">
+    <form>
+        <div class="segment">
+            <h1>Login bij Netwise</h1>
+            <p>Voer je klascode in om toegang te krijgen tot jouw programma’s.</p>
         </div>
-
-        <div class="flower-container">
-            <div class="flower" id="flower">
-                <div class="stem"></div>
-                <div class="petal"></div>
-                <div class="petal"></div>
-                <div class="petal"></div>
-                <div class="petal"></div>
-                <div class="center"></div>
-            </div>
+        
+        <input type="text" id="class-code" placeholder="Klascode voor Netwise">
+        <button class="red" type="button" id="submit-code">Log in</button>
+        
+        <div class="segment">
+            <button class="unit" type="button">⚙️</button>
+            <button class="unit" type="button">🔙</button>
         </div>
-    </div>
+    </form>
 
-    <div class="feedback-panel" id="feedback-panel">
-        <div id="feedback-message">hier komt feedback--wordt nog aan gewerkt </div>
-    </div>
+    <h3>Beschikbare Programma's:</h3>
+    <ul id="program-list"></ul>
 
-    <div class="credits">
-        <p>Credits: Lucas Mangroelal</p>
-    </div>
-
-    <script>
-        const sunlightInput = document.getElementById("sunlight");
-        const oxygenInput = document.getElementById("oxygen");
-        const waterInput = document.getElementById("water");
-        const flower = document.getElementById("flower");
-
-        function updateFlower() {
-            const sunlight = sunlightInput.value;
-            const oxygen = oxygenInput.value;
-            const water = waterInput.value;
-
-            document.getElementById("sunlight-value").textContent = sunlight + "%";
-            document.getElementById("oxygen-value").textContent = oxygen + " gram";
-            document.getElementById("water-value").textContent = water + " mL";
-
-            let brightness = Math.min(sunlight / 100, 1) * Math.min(oxygen / 20, 1) * Math.min(water / 20, 1);
-
-            if (sunlight > 100) {
-                brightness -= (sunlight - 100) / 40; // Plant takelt af boven 100% zonlicht
-            }
-
-            brightness = Math.max(0, brightness); // Voorkom negatieve helderheid
-
-            flower.style.transform = `scale(${0.8 + brightness * 0.4})`;
-            flower.style.filter = `brightness(${50 + brightness * 50}%)`;
-        }
-    </script>
 </body>
 </html>
