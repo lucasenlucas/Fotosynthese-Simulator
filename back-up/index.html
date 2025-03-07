@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vrij Spelen - Fotosynthese Simulatie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: radial-gradient(black 55%, #0000),
+                linear-gradient(
+                    135deg,
+                    #ff7043,
+                    #ffa726,
+                    #fff3e0,
+                    #a2c3fc,
+                    #81d4fa,
+                    #4fc3f7,
+                    #0288d1,
+                    #01579b
+                );
+            background-size: 100% 0.5%, contain;
+            overflow: hidden;
+            transition: background 1s ease;
+        }
+
+        .header {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .control-panel, .flower-container {
+            background: #FFF3E0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            flex: 1;
+            margin: 10px;
+        }
+
+        .flower-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flower {
+            position: relative;
+            width: 100px;
+            height: 150px;
+        }
+
+        .stem {
+            background: #388E3C;
+            width: 20px;
+            height: 80px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 10px;
+        }
+
+        .petal {
+            width: 60px;
+            height: 60px;
+            background: #FF7043;
+            position: absolute;
+            border-radius: 50%;
+            transition: background 0.5s ease, transform 0.5s ease;
+        }
+
+        .petal:nth-child(1) {
+            top: -20px;
+            left: 20px;
+        }
+
+        .petal:nth-child(2) {
+            top: 10px;
+            left: -20px;
+        }
+
+        .petal:nth-child(3) {
+            top: 10px;
+            left: 60px;
+        }
+
+        .petal:nth-child(4) {
+            top: 40px;
+            left: 20px;
+        }
+
+        .center {
+            width: 40px;
+            height: 40px;
+            background: #FFEB3B;
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            border-radius: 50%;
+        }
+
+        .feedback-panel {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ffc107, #ff7043);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1.5em;
+            animation: fadeIn 1s ease;
+        }
+
+        .credits {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #FFA726;
+            animation: slideUp 1s ease;
+        }
+
+        .credits a {
+            color: #FFA726;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .credits a:hover {
+            color: #FFEB3B;
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Versie 1.1</div>
+
+    <div class="container">
+        <div class="control-panel">
+            <h2>SGDC</h2>
+            <label>Zonlicht: <span id="sunlight-value">50%</span></label>
+            <input type="range" id="sunlight" min="0" max="120" value="50" oninput="updateFlower()">
+
+            <label>Koolstofdioxide: <span id="oxygen-value">15 gram</span></label>
+            <input type="range" id="oxygen" min="0" max="30" value="15" oninput="updateFlower()">
+
+            <label>Water: <span id="water-value">15 mL</span></label>
+            <input type="range" id="water" min="0" max="30" value="15" oninput="updateFlower()">
+        </div>
+
+        <div class="flower-container">
+            <div class="flower" id="flower">
+                <div class="stem"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="petal"></div>
+                <div class="center"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="feedback-panel" id="feedback-panel">
+        <div id="feedback-message">hier komt feedback--wordt nog aan gewerkt </div>
+    </div>
+
+    <div class="credits">
+        <p>Credits: Lucas Mangroelal</p>
+    </div>
+
+    <script>
+        const sunlightInput = document.getElementById("sunlight");
+        const oxygenInput = document.getElementById("oxygen");
+        const waterInput = document.getElementById("water");
+        const flower = document.getElementById("flower");
+
+        function updateFlower() {
+            const sunlight = sunlightInput.value;
+            const oxygen = oxygenInput.value;
+            const water = waterInput.value;
+
+            document.getElementById("sunlight-value").textContent = sunlight + "%";
+            document.getElementById("oxygen-value").textContent = oxygen + " gram";
+            document.getElementById("water-value").textContent = water + " mL";
+
+            let brightness = Math.min(sunlight / 100, 1) * Math.min(oxygen / 20, 1) * Math.min(water / 20, 1);
+
+            if (sunlight > 100) {
+                brightness -= (sunlight - 100) / 40; // Plant takelt af boven 100% zonlicht
+            }
+
+            brightness = Math.max(0, brightness); // Voorkom negatieve helderheid
+
+            flower.style.transform = `scale(${0.8 + brightness * 0.4})`;
+            flower.style.filter = `brightness(${50 + brightness * 50}%)`;
+        }
+    </script>
+</body>
+</html>
